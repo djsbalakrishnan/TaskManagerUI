@@ -8,30 +8,39 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import UpdateIcon from '@mui/icons-material/Update';
 
 
-function ToDoCard() {
+function ToDoCard(props) {
+
+    const handleDelete = (id) => {
+        props.handleTodoDelete(id);
+    }
+
+    const handleEdit = (id) => {
+        props.handleTodoEdit(id);
+    }
+
     return (
         <Card variant="outlined" sx={{ maxWidth: 500 }}>
             <CardHeader
-                title="Shrimp and Chorizo Paella"
-                subheader="September 14, 2022"
+                title={props.todo.title}
+                subheader={new Date(props.todo.created_date).toString()}
             />
             <CardContent>
                 <Typography variant="body2" color="text.secondary">
-                    Description
+                    {props.todo.description}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                    Completed: False
+                    Completed: {props.todo.completed ? ("Yes") : ("No")}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                    Due Date: September 14, 2022
+                    Due Date: {new Date(props.todo.due_date).toString()}
                 </Typography>
             </CardContent>
             <CardActions>
                 {/* Delete, Update */}
-                <IconButton>
+                <IconButton onClick={(e) => handleDelete(props.todo.id)}>
                     <DeleteIcon />
                 </IconButton>
-                <IconButton>
+                <IconButton onClick={(e) => handleEdit(props.todo)} >
                     <UpdateIcon />
                 </IconButton>
             </CardActions>
