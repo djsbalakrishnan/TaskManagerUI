@@ -5,6 +5,8 @@ import Navbar from "./components/Navbar";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ToDoList from "./pages/ToDoList";
+import ProtectedRoutes from "./ProtectedRoutes";
+
 
 function App() {
   return (
@@ -14,7 +16,9 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/todo" element={<ToDoList />} />
+        <Route element={<ProtectedRoutes />}>
+          <Route path="/todo" element={<ToDoList />} />
+        </Route>
       </Routes>
     </div>
   );
