@@ -31,7 +31,7 @@ function ToDoList() {
     const todoModalAddHandler = (data) => {
         setToDoModalOpen(false);
         createUserTodos(data).then((response) => {
-            if (response.status == 201) {
+            if (response.status === 201) {
                 let newTodo = response.data;
                 let updatedTodo = [...todos, newTodo]
                 setTodos(updatedTodo)
