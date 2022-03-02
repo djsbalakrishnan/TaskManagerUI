@@ -7,7 +7,8 @@ import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@mui/material/IconButton";
 import Collapse from "@mui/material/Collapse";
-import { getUserTodos, deleteUserTodosById } from "../../utils/Todo";
+import ToDoModalForm from '../../components/ToDoModalForm';
+import { getUserTodos, deleteUserTodosById, createUserTodos, editUserTodosById } from "../../utils/Todo";
 
 import { makeStyles } from "@mui/styles";
 
@@ -18,6 +19,61 @@ function ToDoList() {
     const [alertOpen, setAlertOpen] = useState(false);
     const [alertContent, setAlertContent] = useState("");
     const [alertSev, setAlertSev] = useState("");
+    const [toDoModalOpen, setToDoModalOpen] = useState(false);
+    const [editTodo, setEditTodo] = useState({});
+    const [modalCreateMode, setModalCreateMode] = useState(false);
+
+    // Handle Modal Props
+    const todoModalCloseHandler = () => {
+        setToDoModalOpen(false);
+    }
+
+    const todoModalAddHandler = (data) => {
+        setToDoModalOpen(false);
+        createUserTodos(data).then((response) => {
+            if (response.status == 201) {
+                let newTodo = response.data;
+                let updatedTodo = [...todos, newTodo]
+                setTodos(updatedTodo)
+            }
+            else {
+                setAlertContent("Issue while creating todo, please try again later");
+                setAlertSev("error");
+                setAlertOpen(true);
+            }
+        }).catch((err) => {
+            setAlertContent("Issue with system, please try again later");
+            setAlertSev("error");
+            setAlertOpen(true);
+        })
+    }
+
+    const todoModalEditHandler = (data) => {
+        setToDoModalOpen(false);
+        let id = data['id']
+        delete data.id;
+        delete data.created_date;
+        editUserTodosById(data, id).then((response) => {
+            if (response.status === 200) {
+                let responseData = response.data;
+                let userTodos = todos;
+                userTodos = userTodos.filter((item) => {
+                    return item.id !== id;
+                })
+                userTodos.push(responseData)
+                setTodos(userTodos)
+            }
+            else {
+                setAlertContent("Issue while updating todo, please try again later");
+                setAlertSev("error");
+                setAlertOpen(true);
+            }
+        }).catch((err) => {
+            setAlertContent("Issue with system, please try again later");
+            setAlertSev("error");
+            setAlertOpen(true);
+        })
+    }
 
     const useStyles = makeStyles({
         todoGrid: {
@@ -34,7 +90,7 @@ function ToDoList() {
                 setTodos(response.data)
             }
             else {
-                setAlertContent("Please login again to continue");
+                setAlertContent("Please login to continue");
                 setAlertSev("error");
                 setAlertOpen(true);
             }
@@ -47,10 +103,15 @@ function ToDoList() {
 
     const handleTodoEdit = (todo) => {
         // Handle Edit Todo
+        setEditTodo(todo);
+        setModalCreateMode(false);
+        setToDoModalOpen(true);
     }
 
     const handleAddNewTodo = () => {
-
+        setEditTodo({});
+        setModalCreateMode(true);
+        setToDoModalOpen(true);
     }
 
     const handleTodoDelete = (id) => {
@@ -115,6 +176,15 @@ function ToDoList() {
                     })}
                 </div>
             </Box>
+            {toDoModalOpen ? (
+                <ToDoModalForm isOpen={toDoModalOpen}
+                    createTodo={modalCreateMode}
+                    onClose={todoModalCloseHandler}
+                    onUpdateTodo={todoModalEditHandler}
+                    onAddTodo={todoModalAddHandler}
+                    editTodo={editTodo}
+                />
+            ) : null}
         </>
     )
 }

@@ -22,7 +22,7 @@ function ToDoCard(props) {
         <Card variant="outlined" sx={{ maxWidth: 500 }}>
             <CardHeader
                 title={props.todo.title}
-                subheader={new Date(props.todo.created_date).toString()}
+                subheader={new Date(props.todo.created_date).toISOString().substring(0, 16).replace("T", " ")}
             />
             <CardContent>
                 <Typography variant="body2" color="text.secondary">
@@ -32,7 +32,10 @@ function ToDoCard(props) {
                     Completed: {props.todo.completed ? ("Yes") : ("No")}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                    Due Date: {new Date(props.todo.due_date).toString()}
+                    {props.todo.due_date ?
+                        (<>Due Date: {new Date(props.todo.due_date).toISOString().substring(0, 16).replace("T", " ")}</>) :
+                        (<>Due Date: {props.todo.due_date}</>)
+                    }
                 </Typography>
             </CardContent>
             <CardActions>

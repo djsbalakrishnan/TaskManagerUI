@@ -66,6 +66,9 @@ function retrieveTodos(id) {
 function editTodos(data, id) {
     const url = process.env.REACT_APP_BASE_URL + "api/todos/" + id + "/"
     const authToken = localStorage.getItem('token')
+    if (data["due_date"] === "") {
+        data["due_date"] = null
+    }
     return axios.put(url, data, {
         headers: {
             'Authorization': `token ${authToken}`
